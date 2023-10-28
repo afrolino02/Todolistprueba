@@ -12,6 +12,10 @@ function initApp(){
     // Listeners
     function listeners(){
         formulario.addEventListener('submit', agregarTarea);
+        tareas = JSON.parse(localStorage.getItem('tareas'));
+                sincronizarLocalStorage();
+                mostrarHistorialDeTareas();
+                
        
     }
 
@@ -43,25 +47,29 @@ function initApp(){
             console.log(tareas)
             // console.log(tareas)
             formulario.reset();
-            eliminar(tareaNueva, tareasObj.id)
-            editar(tareasObj)
+            eliminar(tareaNueva, tareasObj.id);
+            editar(tareaNueva,tareasObj);
+
+            // Restablecer almacenamiento persistente
+       
         }  
         
         
     }
     function eliminar(e, id){
-        const eliminarTexto = document.querySelector('.eliminar');
-        eliminarTexto.addEventListener('click', function(){
-                eliminarTexto.parentNode.parentNode.remove(); 
+        const eliminarTexto = e.querySelector('.eliminar');
+        eliminarTexto.onclick = () => {
+            eliminarTexto.parentNode.parentNode.remove(); 
                 tareas = tareas.filter( tarea => tarea.id !== id);
-                console.log(tareas)  
-        })   
+                console.log(tareas)
+                sincronizarLocalStorage();
+        };   
         
     }
 
-    function editar(tareaObj){
+    function editar(e ,tareaObj){
         const { tareaEscrita, id } = tareaObj;
-        const editarBoton = document.querySelector('.editar');
+        const editarBoton = e.querySelector('.editar');
         editarBoton.onclick = function(){
             const tareasInput = document.querySelector('#tarea');
             tareasInput.value = tareaEscrita;
@@ -70,6 +78,7 @@ function initApp(){
             formulario.querySelector('button[type="submit"]').onclick = () => {
                 editarBoton.parentNode.parentNode.remove(); 
                 tareas = tareas.filter( tarea => tarea.id !== id);
+                sincronizarLocalStorage();
             };
         };
         
@@ -99,6 +108,26 @@ function initApp(){
         }, 3000);
        }
             
+        
+    }
+
+    function sincronizarLocalStorage(){
+        localStorage.setItem('tareas', JSON.stringify(tareas))
+    }
+
+    function mostrarHistorialDeTareas(){
+        const tareasEspacio = document.querySelector('.div-2');
+        tareas.forEach( tarea => {
+            const tareaNueva = document.createElement('DIV');
+        tareaNueva.classList.add('tareas');
+        tareaNueva.innerHTML += ` 
+        <li> ${tarea.tareaEscrita} <span class="eliminar"> eliminar</span><span class="editar"> editar</span></li>
+        `;
+        tareasEspacio.appendChild(tareaNueva);
+        eliminar(tareaNueva, tarea.id)
+        editar(tareaNueva,tarea);
+        
+        })
         
     }
 
