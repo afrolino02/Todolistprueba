@@ -12,7 +12,7 @@ function initApp(){
     // Listeners
     function listeners(){
         formulario.addEventListener('submit', agregarTarea);
-        tareas = JSON.parse(localStorage.getItem('tareas'));
+        tareas = JSON.parse(localStorage.getItem('tareas')) || [];
                 sincronizarLocalStorage();
                 mostrarHistorialDeTareas();
                 
@@ -117,17 +117,19 @@ function initApp(){
 
     function mostrarHistorialDeTareas(){
         const tareasEspacio = document.querySelector('.div-2');
-        tareas.forEach( tarea => {
-            const tareaNueva = document.createElement('DIV');
-        tareaNueva.classList.add('tareas');
-        tareaNueva.innerHTML += ` 
-        <li> ${tarea.tareaEscrita} <span class="eliminar"> eliminar</span><span class="editar"> editar</span></li>
-        `;
-        tareasEspacio.appendChild(tareaNueva);
-        eliminar(tareaNueva, tarea.id)
-        editar(tareaNueva,tarea);
-        
-        })
+        if(tareas){
+            tareas.forEach( tarea => {
+                const tareaNueva = document.createElement('DIV');
+            tareaNueva.classList.add('tareas');
+            tareaNueva.innerHTML += ` 
+            <li> ${tarea.tareaEscrita} <span class="eliminar"> eliminar</span><span class="editar"> editar</span></li>
+            `;
+            tareasEspacio.appendChild(tareaNueva);
+            eliminar(tareaNueva, tarea.id)
+            editar(tareaNueva,tarea);
+            
+            })
+        }
         
     }
 
